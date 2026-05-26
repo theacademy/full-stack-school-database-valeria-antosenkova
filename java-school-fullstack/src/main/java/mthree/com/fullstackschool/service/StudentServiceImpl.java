@@ -4,7 +4,6 @@ import mthree.com.fullstackschool.dao.CourseDao;
 import mthree.com.fullstackschool.dao.StudentDao;
 import mthree.com.fullstackschool.model.Course;
 import mthree.com.fullstackschool.model.Student;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.List;
