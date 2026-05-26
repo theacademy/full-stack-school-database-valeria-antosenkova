@@ -2,6 +2,7 @@ package mthree.com.fullstackschool.service;
 
 import mthree.com.fullstackschool.dao.CourseDao;
 import mthree.com.fullstackschool.model.Course;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -28,7 +29,14 @@ public class CourseServiceImpl implements CourseServiceInterface {
     public Course getCourseById(int id) {
         //YOUR CODE STARTS HERE
 
-        return courseDao.findCourseById(id);
+        try {
+            return courseDao.findCourseById(id);
+        } catch (DataAccessException e) {
+            Course course = new Course();
+            course.setCourseName("Course Not Found");
+            course.setCourseDesc("Course Not Found");
+            return course;
+        }
 
         //YOUR CODE ENDS HERE
     }
@@ -68,7 +76,7 @@ public class CourseServiceImpl implements CourseServiceInterface {
         //YOUR CODE STARTS HERE
         courseDao.deleteAllStudentsFromCourse(id);
         courseDao.deleteCourse(id);
-
+        System.out.println("Course ID: " + id + " deleted");
         //YOUR CODE ENDS HERE
     }
 }

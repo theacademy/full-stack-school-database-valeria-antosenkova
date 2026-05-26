@@ -1,7 +1,11 @@
 package mthree.com.fullstackschool.service;
 
+import mthree.com.fullstackschool.dao.CourseDao;
 import mthree.com.fullstackschool.dao.StudentDao;
+import mthree.com.fullstackschool.model.Course;
 import mthree.com.fullstackschool.model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -11,6 +15,9 @@ public class StudentServiceImpl implements StudentServiceInterface {
 
     //YOUR CODE STARTS HERE
     private final StudentDao studentDao;
+
+    private CourseDao courseDao;
+
     public StudentServiceImpl(StudentDao studentDao) {
         this.studentDao = studentDao;
     }
@@ -28,7 +35,14 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public Student getStudentById(int id) {
         //YOUR CODE STARTS HERE
 
-        return studentDao.findStudentById(id);
+        try {
+            return studentDao.findStudentById(id);
+        } catch (DataAccessException e) {
+            Student student = new Student();
+            student.setStudentFirstName("Student Not Found");
+            student.setStudentLastName("Student Not Found");
+            return student;
+        }
 
         //YOUR CODE ENDS HERE
     }
@@ -75,8 +89,20 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public void deleteStudentFromCourse(int studentId, int courseId) {
         //YOUR CODE STARTS HERE
 
+        Student student = getStudentById(studentId);
+        if (student.getStudentFirstName().equals("Student Not Found")) {
+            System.out.println("Student not found");
+            return;
+        }
+        if (courseDao != null) {
+            Course course = courseDao.findCourseById(courseId);
+            if (course == null || course.getCourseName().equals("Course Not Found")) {
+                System.out.println("Course not found");
+                return;
+            }
+        }
         studentDao.deleteStudentFromCourse(studentId, courseId);
-
+        System.out.println("Student: " + studentId + " deleted from course: " + courseId);
 
         //YOUR CODE ENDS HERE
     }
@@ -84,7 +110,24 @@ public class StudentServiceImpl implements StudentServiceInterface {
     public void addStudentToCourse(int studentId, int courseId) {
         //YOUR CODE STARTS HERE
 
-        studentDao.addStudentToCourse(studentId, courseId);
+        Student student = getStudentById(studentId);
+        if (student.getStudentFirstName().equals("Student Not Found")) {
+            System.out.println("Student not found");
+            return;
+        }
+        if (courseDao != null) {
+            Course course = courseDao.findCourseById(courseId);
+            if (course == null || course.getCourseName().equals("Course Not Found")) {
+                System.out.println("Course not found");
+                return;
+            }
+        }
+        try {
+            studentDao.addStudentToCourse(studentId, courseId);
+            System.out.println("Student: " + studentId + " added to course: " + courseId);
+        } catch (DataAccessException e) {
+            System.out.println("Student: " + studentId + " already enrolled in course: " + courseId);
+        }
 
         //YOUR CODE ENDS HERE
     }
